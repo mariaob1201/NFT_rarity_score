@@ -120,7 +120,7 @@ for el in ['Ash', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster
            'Topaz', 'Antimony','Calcium', 'Carbon', 'Hydrogen','Nitrogen', 'Silicon', 'Sulfur']:
     dict_elem[el]=0
     for key, value in qualities_df1.iterrows():
-        if i in data.at[key, "List_of_elements"]:
+        if el in data.at[key, "List_of_elements"]:
             dict_elem[el]+=1
 
 elements=pd.DataFrame.from_dict(dict_elem)
