@@ -55,7 +55,15 @@ st.write(
     both of them are dependent on the collection:
     - An statistical methodology based on rarity weights
     https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
-    - An frequentist methodology based on distribution. """
+    - An frequentist methodology based on distribution. 
+
+    THE CLASSIFICATION:
+            - Meager: 10 % of plots population with lowest score
+            - Fair: plots population with score between [.11,.25]
+            - Rich: plots population with score between [.26,.65] 
+            - Lush: plots population with score between [.66,.94]       
+            - Bountiful: plots population with score between [.95,1] 
+"""
 )
 
 
@@ -68,8 +76,8 @@ st.write(
                 - Scoring the material intensity: takes into account the plot size that have a bigger scale in material storage, and at the same time takes into account the essence strength per each material available in such existent deposits
                 - Scoring the deposits existence measures two things:
                     - Scoring the amount of materials for all the deposits the plot has
-                    - Scoring the total of deposits    
-            """
+                    - Scoring the total of deposits
+    """
 )
 
 
