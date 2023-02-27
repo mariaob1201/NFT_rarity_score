@@ -131,11 +131,10 @@ dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
 dframe2=dframe[dframe['Vol']>0]
-
+dframe2['%'] = dframe2['Vol']/len(dframe2)
 st.dataframe(dframe2)
 
-import plotly.express as px
-fig = px.pie(dframe2, values='Vol', names='Materials')
-fig.show()
+fig11 = px.pie(dframe2, values='Vol', names='Materials')
+st.plotly_chart(fig11)
 
 
