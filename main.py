@@ -132,7 +132,7 @@ for key, value in qualities_df1.iterrows():
     for el1 in res2:
         dict_elem1[el1] += 1
 
-elements=pd.DataFrame.from_dict(dict_elem1)
+elements=pd.DataFrame([dict_elem1])
 st.dataframe(elements)
 
 st.write(
