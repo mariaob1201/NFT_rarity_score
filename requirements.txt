@@ -7,4 +7,3 @@ pyprobs
 streamlit-aggrid==0.2.2-2
 scikit-learn
 numpy
-ast
