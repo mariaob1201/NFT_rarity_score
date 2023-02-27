@@ -175,7 +175,7 @@ dframe2=dframe[dframe['Vol']>0]
 #dframe2['%'] = dframe2['Vol']/sum(dframe2)
 st.dataframe(dframe2)
 
-#fig11 = px.pie(dframe2, values='Vol', names='Materials')
-#st.plotly_chart(fig11)
+fig11 = px.pie(dframe2, values='Vol', names='Materials')
+st.plotly_chart(fig11)
 
 
