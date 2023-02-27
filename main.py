@@ -50,7 +50,7 @@ else:
 if 'All' not in classif:
     qualities_df1 = qualities_df1[qualities_df1['Classification'] == classif]
 
-print('**** ', qualities_df1.columns)
+#print('**** ', qualities_df1.columns)
 
 # GATHERING ON THE PLOT - SIMULATION
 st.header("Plot Quality")
