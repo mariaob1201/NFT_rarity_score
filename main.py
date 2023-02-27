@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 from functions import *
 import plotly.express as px
+import ast
 
 qualities_df=pd.read_csv('output_score_yisus.csv')
 qualities_df['Score_f']=100*qualities_df['Score']
@@ -113,21 +114,25 @@ st.dataframe(split)
 split.melt(value_name="val").groupby(["val"]).size()
 st.dataframe(split)"""
 
+for key, value in qualities_df1.iterrows():
+    # print('Here ', key, qualities_df1.at[key, "List_of_elements"])
+    # Extract the elements of the list from the string
+    # elements = re.findall(r'\d+', qualities_df1.at[key, "List_of_elements"])
 
-for el in ['Ash_tint', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster', 'Basalt','Granite', 'Limestone',
-           'Marble','Sand', 'Shale', 'Cashmere','Cotton', 'Flax', 'Hemp','Jute', 'Silk', 'Wool', 'Aluminum', 'Copper',
-           'Iron','Tin', 'Titanium', 'Tungsten','Zinc', 'Amethyst', 'Diamond','Emerald', 'Ruby', 'Sapphire','Smoky Quartz',
-           'Topaz', 'Antimony','Calcium', 'Carbon', 'Hydrogen','Nitrogen', 'Silicon', 'Sulfur']:
-    dict_elem[el]=0
-    for key, value in qualities_df1.iterrows():
-        if el in qualities_df1.at[key, "List_of_elements"]:
-            dict_elem[el]+=1
+    # Convert the elements to integers
+    res = ast.literal_eval(qualities_df1.at[key, "List_of_elements"])  # .strip('][').split(', ')
+    res1 = [i.replace('_tint', '') for i in res]
+    res2 = list(set(res1))
+    # [int(x) for x in elements]
+    # print(type(res),res)
+    for el1 in res2:
+        dict_elem1[el1] += 1
 
-elements=pd.DataFrame.from_dict(dict_elem)
+elements=pd.DataFrame.from_dict(dict_elem1)
 st.dataframe(elements)
 
 st.write(
-    f""" Elements {elements} """
+    f""" Elements {dict_elem1} """
 )
 
 """
