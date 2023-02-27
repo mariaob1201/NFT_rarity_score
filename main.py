@@ -132,15 +132,17 @@ for key, value in qualities_df1.iterrows():
     for el1 in res2:
         dict_elem1[el1] += 1
 
-elements=pd.DataFrame([dict_elem1])
-st.dataframe(elements)
+x=list(dict_elem1.keys())
+y=list(dict_elem1.values())
+#elements=pd.DataFrame([dict_elem1])
+#st.dataframe(elements)
 
-st.write(
-    f""" Elements {dict_elem1}, els {elements} """
-)
+#st.write(
+#    f""" Elements {dict_elem1}, els {elements} """
+#)
 
-#fig = px.pie(elements, values="sepal_width", names="species")
-#fig.show()
+fig = px.pie(values=x, names=y)
+fig.show()
 
 """
 st.dataframe(elements)
