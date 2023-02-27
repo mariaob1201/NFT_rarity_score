@@ -102,3 +102,24 @@ fig_wd1.update_layout(
         xaxis_title="Number of distinct materials available in single plot", yaxis_title="Plot Score"
     )
 st.plotly_chart(fig_wd1)
+
+
+### How many plots
+dict_elem = {}
+for el in ['Ash', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster', 'Basalt','Granite', 'Limestone',
+           'Marble','Sand', 'Shale', 'Cashmere','Cotton', 'Flax', 'Hemp','Jute', 'Silk', 'Wool','Aluminum', 'Copper',
+           'Iron','Tin', 'Titanium', 'Tungsten','Zinc', 'Amethyst', 'Diamond','Emerald', 'Ruby', 'Sapphire','Smoky Quartz',
+           'Topaz', 'Antimony','Calcium', 'Carbon', 'Hydrogen','Nitrogen', 'Silicon', 'Sulfur']:
+    dict_elem[el]=qualities_df1[qualities_df1[el+'_tintensity']>0]
+
+elements=pd.DataFrame.from_dict(dict_elem)
+
+st.dataframe(elements)
+"""fig_elements = px.bar(elements, x="plot_size", y=['Gems__Deposits', 'Element__Deposits',
+       'Metals__Deposits', 'Fabrics__Deposits',
+       'Woods__Deposits', 'Stone__Deposits'],log_y=True,
+                title="Total deposits per plot size taking all the plots into account", barmode='group',
+             height=400)
+fig_elements.update_xaxes(categoryorder='array', categoryarray= ['8x8','16x16','32x32','64x64','128x128'])
+st.plotly_chart(fig_elements)"""
+
