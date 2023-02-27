@@ -134,7 +134,8 @@ dframe2=dframe[dframe['Vol']>0]
 
 st.dataframe(dframe2)
 
-fig = px.pie(dframe2, values='Materials', names='Vol')
+import plotly.express as px
+fig = px.pie(dframe2, values='Vol', names='Materials')
 fig.show()
 
 
