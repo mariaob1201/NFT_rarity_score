@@ -16,7 +16,7 @@ st.sidebar.markdown("## General Controls")
 # Selección del plot
 reg = st.sidebar.selectbox(
     "Chose Region for Qualities:",
-    ['All'] + list(qualities_df['Region'].unique())
+    ['All'] + sorted(list(qualities_df['Region'].unique()))
 )
 
 ps = st.sidebar.selectbox(
@@ -26,7 +26,7 @@ ps = st.sidebar.selectbox(
 
 classif = st.sidebar.selectbox(
     "Chose Quality Class:",
-    ['All'] + ['Rich','Lush','Meager','Fair','Bountiful']
+    ['All'] + ['Meager','Fair','Rich','Lush','Bountiful']
 )
 
 if 'All' in reg:
@@ -96,7 +96,7 @@ st.plotly_chart(fig_wd1)
 
 qua_p = qualities_df3.groupby(['Region'], as_index=False).agg({
     'plot_id': ['count'],
-    'Score_f': ['min','max','median','std', percentile(25), 'mean', percentile(75)]
+    'Score_f': ['min','max','median','mean', percentile(25), percentile(75), 'std']
 })
 qua_p['%']=qua_p[('plot_id', 'count')]/9650
 st.dataframe(qua_p)
