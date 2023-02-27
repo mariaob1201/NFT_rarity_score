@@ -35,11 +35,11 @@ classif = st.sidebar.selectbox(
 )
 
 if 'All' in reg:
-    qualities_df3 = qualities_df
     if ps<1:
         qualities_df1 = qualities_df
     else:
         qualities_df1 = qualities_df[qualities_df['plot_size'] == ps]
+    qualities_df3 = qualities_df1
 else:
     qualities_df0 = qualities_df[qualities_df['Region']==reg]
     qualities_df3 = qualities_df0
