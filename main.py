@@ -84,7 +84,7 @@ st.write(
 
 qua_p = qualities_df1.groupby(['Region'], as_index=False).agg({
     'plot_id': ['count'],
-    'Score_f': ['min','max','median','mean', percentile(25), percentile(75), 'std']
+    'Score_f': ['mean','min','max','median', percentile(25), percentile(75), 'std']
 })
 qua_p['%']=qua_p[('plot_id', 'count')]/N
 st.dataframe(qua_p)
