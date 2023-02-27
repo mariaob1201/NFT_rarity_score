@@ -47,7 +47,7 @@ else:
 if 'All' not in classif:
     qualities_df1 = qualities_df1[qualities_df1['Classification'] == classif]
 
-
+print('**** ', qualities_df1.columns)
 
 # GATHERING ON THE PLOT - SIMULATION
 st.header("Plot Quality")
@@ -106,16 +106,29 @@ st.plotly_chart(fig_wd1)
 
 ### How many plots
 dict_elem = {}
+split = qualities_df1["List_of_elements"].apply(pd.Series)
+split = split.rename(columns = lambda x : 'val_' + str(x))
+st.dataframe(split)
+
+split.melt(value_name="val").groupby(["val"]).size()
+st.dataframe(split)
+
+
 for el in ['Ash', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster', 'Basalt','Granite', 'Limestone',
-           'Marble','Sand', 'Shale', 'Cashmere','Cotton', 'Flax', 'Hemp','Jute', 'Silk', 'Wool','Aluminum', 'Copper',
+           'Marble','Sand', 'Shale', 'Cashmere','Cotton', 'Flax', 'Hemp','Jute', 'Silk', 'Wool', 'Aluminum', 'Copper',
            'Iron','Tin', 'Titanium', 'Tungsten','Zinc', 'Amethyst', 'Diamond','Emerald', 'Ruby', 'Sapphire','Smoky Quartz',
            'Topaz', 'Antimony','Calcium', 'Carbon', 'Hydrogen','Nitrogen', 'Silicon', 'Sulfur']:
-    dict_elem[el]=qualities_df1[qualities_df1[el+'_tintensity']>0]
+    dict_elem[el]=0
+    for key, value in qualities_df1.iterrows():
+        if i in data.at[key, "List_of_elements"]:
+            dict_elem[el]+=1
 
 elements=pd.DataFrame.from_dict(dict_elem)
-
 st.dataframe(elements)
-"""fig_elements = px.bar(elements, x="plot_size", y=['Gems__Deposits', 'Element__Deposits',
+
+"""
+st.dataframe(elements)
+fig_elements = px.bar(elements, x="plot_size", y=['Gems__Deposits', 'Element__Deposits',
        'Metals__Deposits', 'Fabrics__Deposits',
        'Woods__Deposits', 'Stone__Deposits'],log_y=True,
                 title="Total deposits per plot size taking all the plots into account", barmode='group',
