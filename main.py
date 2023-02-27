@@ -130,9 +130,11 @@ dict_f['Materials'] = dict_elem1.keys()
 dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
-st.dataframe(dframe)
+dframe2=dframe[dframe['Vol']>0]
 
-fig = px.pie(dframe[dframe['Vol']>0], values='Materials', names='Vol')
+st.dataframe(dframe2)
+
+fig = px.pie(dframe2, values='Materials', names='Vol')
 fig.show()
 
 
