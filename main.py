@@ -106,15 +106,15 @@ st.plotly_chart(fig_wd1)
 
 ### How many plots
 dict_elem = {}
-split = qualities_df1["List_of_elements"].apply(pd.Series)
+"""split = qualities_df1["List_of_elements"].apply(pd.Series)
 split = split.rename(columns = lambda x : 'val_' + str(x))
 st.dataframe(split)
 
 split.melt(value_name="val").groupby(["val"]).size()
-st.dataframe(split)
+st.dataframe(split)"""
 
 
-for el in ['Ash', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster', 'Basalt','Granite', 'Limestone',
+for el in ['Ash_tint', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster', 'Basalt','Granite', 'Limestone',
            'Marble','Sand', 'Shale', 'Cashmere','Cotton', 'Flax', 'Hemp','Jute', 'Silk', 'Wool', 'Aluminum', 'Copper',
            'Iron','Tin', 'Titanium', 'Tungsten','Zinc', 'Amethyst', 'Diamond','Emerald', 'Ruby', 'Sapphire','Smoky Quartz',
            'Topaz', 'Antimony','Calcium', 'Carbon', 'Hydrogen','Nitrogen', 'Silicon', 'Sulfur']:
@@ -125,6 +125,10 @@ for el in ['Ash', 'Holly', 'Oak','Olive', 'Pine', 'Redwood','Willow', 'Alabaster
 
 elements=pd.DataFrame.from_dict(dict_elem)
 st.dataframe(elements)
+
+st.write(
+    f""" Elements {elements} """
+)
 
 """
 st.dataframe(elements)
