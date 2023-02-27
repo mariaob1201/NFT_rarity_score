@@ -107,6 +107,24 @@ fig_wd1.update_layout(
 st.plotly_chart(fig_wd1)
 
 
+# distplot
+#Woods_elements,Stone_elements,Fabrics_elements,Metals_elements,Gems_elements,Element_elements
+hist_data = [qualities_df1['Woods_elements'].values, qualities_df1['Stone_elements'].values,
+             qualities_df1['Fabrics_elements'].values,qualities_df1['Metals_elements'].values,
+             qualities_df1['Gems_elements'].values,qualities_df1['Element_elements'].values]
+group_labels = ['Size Woods Deposit', 'Size Stone Deposit',
+                'Size Fabrics Deposit', 'Size Metals Deposit',
+                'Size Gems Deposit','Size Elements Deposit']
+#fig2 = ff.create_distplot(hist_data, group_labels)
+
+import plotly.figure_factory as ff
+
+# combine make_subplots, go.Scatter and ff.create_distplot(
+f=ff.create_distplot(hist_data, group_labels)
+st.plotly_chart(f)
+
+
+
 ### How many plots
 dict_elem = {}
 
