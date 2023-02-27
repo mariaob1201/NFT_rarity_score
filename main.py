@@ -94,7 +94,7 @@ fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score_f'],
         size="plot_size",
         color="Classification",
         title=f"""Plot Score by Number of distinct elements available there""",
-        hover_data=['Region','Score_Deposits','Class_Deposits', 'Class_Inensity','Score_Intensity',
+        hover_data=['Region','Score_f','Score_Deposits','Class_Deposits', 'Class_Inensity','Score_Intensity',
             'Woods_elements', 'Stone_elements',
             'Fabrics_elements', 'Metals_elements', 'Gems_elements',
             'Element_elements' ], height=400)
