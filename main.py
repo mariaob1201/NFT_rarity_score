@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.express as px
 
 qualities_df=pd.read_csv('output_score_yisus.csv')
+qualities_df['Score_f']=100*qualities_df['Score']
 def fun(x):
     if len(x)<4:
         return 8
@@ -78,7 +79,7 @@ st.write(
 
 
 
-fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score'],
+fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score_f'],
         size="plot_size",
         color="Classification",
         title=f"""Plot Score by Number of distinct elements available there""",
@@ -94,7 +95,7 @@ st.plotly_chart(fig_wd1)
 
 qua_p = qualities_df3.groupby(['Region'], as_index=False).agg({
     'plot_id': ['count'],
-    'Score': ['min','max','median','mean','std']
+    'Score_f': ['min','max','median','mean','std']
 })
 qua_p['%']=qua_p[('plot_id', 'count')]/9650
 st.dataframe(qua_p)
