@@ -19,7 +19,7 @@ st.sidebar.markdown("## 4. Controls for Plot Quality")
 # Selección del plot
 reg = st.sidebar.selectbox(
     "Chose Region for Qualities:",
-    ['All'] + list(data0['Region'].unique())
+    ['All'] + list(qualities_df['Region'].unique())
 )
 
 ps = st.sidebar.selectbox(
