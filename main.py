@@ -56,15 +56,15 @@ st.write(
     - An statistical methodology based on rarity weights
     https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
     - An frequentist methodology based on distribution. 
-
-    THE CLASSIFICATION:
-            - Meager: 10 % of plots population with lowest score
-            - Fair: plots population with score between [.11,.25]
-            - Rich: plots population with score between [.26,.65] 
-            - Lush: plots population with score between [.66,.94]       
-            - Bountiful: plots population with score between [.95,1] 
 """
 )
+
+st.write("THE CLASSIFICATION")
+st.markdown("- Meager: 10 % of plots population with lowest score")
+st.markdown("- Fair: plots population with score between [.11,.25]")
+st.markdown("- Rich: plots population with score between [.26,.65] ")
+st.markdown("- Lush: plots population with score between [.66,.94] ")
+st.markdown("- Bountiful: plots population with score between [.95,1] ")
 
 
 st.subheader('''Statistical methodology ''')
@@ -79,8 +79,6 @@ st.write(
                     - Scoring the total of deposits
     """
 )
-
-
 
 fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score_f'],
         size="plot_size",
