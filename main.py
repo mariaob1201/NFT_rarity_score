@@ -82,7 +82,7 @@ st.write(
 )
 
 
-qua_p = qualities_df3.groupby(['Region'], as_index=False).agg({
+qua_p = qualities_df1.groupby(['Region'], as_index=False).agg({
     'plot_id': ['count'],
     'Score_f': ['min','max','median','mean', percentile(25), percentile(75), 'std']
 })
