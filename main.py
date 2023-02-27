@@ -125,8 +125,13 @@ for key, value in qualities_df1.iterrows():
 x=list(dict_elem1.keys())
 y=list(dict_elem1.values())
 
-import plotly.express as px
-fig = px.pie(values=x, names=y)
+dict_f = {}
+dict_f['Materials'] = dict_elem1.keys()
+dict_f['Vol'] = dict_elem1.values
+
+dframe = pd.DataFrame.from_dict(dict_f)
+
+fig = px.pie(dframe, values='Materials', names='Vol', color_discrete_sequence=px.colors.sequential.RdBu)
 fig.show()
 
 
