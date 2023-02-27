@@ -15,7 +15,24 @@ def fun(x):
         return int(x[:2])
 
 # GATHERING ON THE PLOT - SIMULATION
-st.sidebar.markdown("## 4. Controls for Plot Quality")
+st.sidebar.markdown("## Plot Quality")
+
+st.subheader('''Controls for Plot Quality ''')
+st.write(
+    f""" 
+            Methodology: https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
+
+            Controls for plot quality allows to filtrate on plot size, region and even the plot final class. The graphics bellow shows the Final Plot Score by the number of distinct material available there. 
+            The Final Score takes into account two preeliminar scores:
+
+                - Scoring the material intensity: takes into account the plot size that have a bigger scale in material storage, and at the same time takes into account the essence strength per each material available in such existent deposits
+                - Scoring the deposits existence measures two things:
+                    - Scoring the amount of materials for all the deposits the plot has
+                    - Scoring the total of deposits    
+            """
+)
+
+
 # Selección del plot
 reg = st.sidebar.selectbox(
     "Chose Region for Qualities:",
@@ -48,6 +65,9 @@ else:
 
 if 'All' not in classif:
     qualities_df1 = qualities_df1[qualities_df1['Classification'] == classif]
+
+# GATHERING ON THE PLOT - SIMULATION
+st.sidebar.markdown("## Statistical Rarity Score")
 
 fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score'],
         size="plot_size",
