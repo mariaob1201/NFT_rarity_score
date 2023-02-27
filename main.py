@@ -63,12 +63,10 @@ st.write(
 )
 
 
-st.subheader('''Controls for Plot Quality ''')
+st.subheader('''Statistical methodology ''')
 st.write(
     f""" 
             Methodology: https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
-
-            Controls for plot quality allows to filtrate on plot size, region and even the plot final class. The graphics bellow shows the Final Plot Score by the number of distinct material available there. 
             The Final Score takes into account two preeliminar scores:
 
                 - Scoring the material intensity: takes into account the plot size that have a bigger scale in material storage, and at the same time takes into account the essence strength per each material available in such existent deposits
