@@ -5,7 +5,6 @@
 import streamlit as st
 import pandas as pd
 
-from depositchances import *
 import plotly.express as px
 
 qualities_df=pd.read_csv('output_score_yisus.csv')
