@@ -32,7 +32,8 @@ classif = st.sidebar.selectbox(
     "Chose Quality Class:",
     ['All'] + ['Meager','Fair','Rich','Lush','Bountiful']
 )
-min_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=50 ,step=1)
+min_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=0 ,step=1)
+max_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=100 ,step=1)
 
 st.sidebar.markdown("## Min number of elements per deposits")
 woods_size = st.sidebar.slider('Size of Wood Deposits', min_value=0, max_value=7, value=0,step=1)
@@ -69,6 +70,7 @@ qualities_df1 = qualities_df1[(qualities_df1['Woods_elements']>=woods_size) &
                             (qualities_df1['Element_elements'] >= els_size)]
 
 qualities_df1 = qualities_df1[qualities_df1['Score_f'] >= min_score]
+qualities_df1 = qualities_df1[qualities_df1['Score_f'] <= max_score]
 
 
 
