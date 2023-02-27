@@ -130,6 +130,7 @@ dict_f['Materials'] = dict_elem1.keys()
 dict_f['Vol'] = dict_elem1.values
 
 dframe = pd.DataFrame.from_dict(dict_f)
+st.dataframe(dframe)
 
 fig = px.pie(dframe, values='Materials', names='Vol', color_discrete_sequence=px.colors.sequential.RdBu)
 fig.show()
