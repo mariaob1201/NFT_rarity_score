@@ -109,48 +109,24 @@ st.plotly_chart(fig_wd1)
 
 ### How many plots
 dict_elem = {}
-"""split = qualities_df1["List_of_elements"].apply(pd.Series)
-split = split.rename(columns = lambda x : 'val_' + str(x))
-st.dataframe(split)
-
-split.melt(value_name="val").groupby(["val"]).size()
-st.dataframe(split)"""
 
 dict_elem1 = functions.dict_elem
 
 for key, value in qualities_df1.iterrows():
-    # print('Here ', key, qualities_df1.at[key, "List_of_elements"])
-    # Extract the elements of the list from the string
-    # elements = re.findall(r'\d+', qualities_df1.at[key, "List_of_elements"])
 
     # Convert the elements to integers
     res = ast.literal_eval(qualities_df1.at[key, "List_of_elements"])  # .strip('][').split(', ')
     res1 = [i.replace('_tint', '') for i in res]
     res2 = list(set(res1))
-    # [int(x) for x in elements]
-    # print(type(res),res)
+
     for el1 in res2:
         dict_elem1[el1] += 1
 
 x=list(dict_elem1.keys())
 y=list(dict_elem1.values())
-#elements=pd.DataFrame([dict_elem1])
-#st.dataframe(elements)
 
-#st.write(
-#    f""" Elements {dict_elem1}, els {elements} """
-#)
-
+import plotly.express as px
 fig = px.pie(values=x, names=y)
 fig.show()
 
-"""
-st.dataframe(elements)
-fig_elements = px.bar(elements, x="plot_size", y=['Gems__Deposits', 'Element__Deposits',
-       'Metals__Deposits', 'Fabrics__Deposits',
-       'Woods__Deposits', 'Stone__Deposits'],log_y=True,
-                title="Total deposits per plot size taking all the plots into account", barmode='group',
-             height=400)
-fig_elements.update_xaxes(categoryorder='array', categoryarray= ['8x8','16x16','32x32','64x64','128x128'])
-st.plotly_chart(fig_elements)"""
 
