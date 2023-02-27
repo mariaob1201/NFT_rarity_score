@@ -15,7 +15,7 @@ qualities_df['Score_f']=100*qualities_df['Score']
 N=len(qualities_df)
 
 # GATHERING ON THE PLOT - SIMULATION
-st.sidebar.markdown("## Controls")
+st.sidebar.markdown("## Plot Attributes")
 
 # Selección del plot
 reg = st.sidebar.selectbox(
@@ -32,9 +32,9 @@ classif = st.sidebar.selectbox(
     "Chose Quality Class:",
     ['All'] + ['Meager','Fair','Rich','Lush','Bountiful']
 )
+min_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=50 ,step=1)
 
-
-st.sidebar.markdown("## Number of deposits (at least)")
+st.sidebar.markdown("## Min number of elements per deposits")
 woods_size = st.sidebar.slider('Size of Wood Deposits', min_value=0, max_value=7, value=0,step=1)
 stone_size = st.sidebar.slider('Size of Stone Deposits', min_value=0, max_value=7, value=0,step=1)
 fabr_size = st.sidebar.slider('Size of Fabric Deposits', min_value=0, max_value=7, value=0,step=1)
@@ -65,8 +65,11 @@ qualities_df1 = qualities_df1[(qualities_df1['Woods_elements']>=woods_size) &
                             (qualities_df1['Stone_elements']>=stone_size) &
                             (qualities_df1['Fabrics_elements']>=fabr_size) &
                             (qualities_df1['Metals_elements']>=met_size) &
-                            (qualities_df1['Gems_elements']>=gems_size) &
-                            (qualities_df1['Element_elements']>=els_size)]
+                            (qualities_df1['Gems_elements'] >= gems_size) &
+                            (qualities_df1['Element_elements'] >= els_size)]
+
+qualities_df1 = qualities_df1[qualities_df1['Score_f'] >= min_score]
+
 
 
 #print('**** ', qualities_df1.columns)
@@ -121,28 +124,9 @@ fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score_f'],
             'Fabrics_elements', 'Metals_elements', 'Gems_elements',
             'Element_elements' ], height=400)
 fig_wd1.update_layout(
-        xaxis_title="Number of distinct materials available in single plot", yaxis_title="Plot Score"
+        xaxis_title="Number of distinct materials available in a single plot", yaxis_title="Plot Score"
     )
 st.plotly_chart(fig_wd1)
-
-
-# distplot
-#Woods_elements,Stone_elements,Fabrics_elements,Metals_elements,Gems_elements,Element_elements
-#hist_data = [qualities_df1['Woods_elements'].values, qualities_df1['Stone_elements'].values,
-             #qualities_df1['Fabrics_elements'].values,qualities_df1['Metals_elements'].values,
-             #            qualities_df1['Gems_elements'].values,qualities_df1['Element_elements'].values]
-#group_labels = ['Size Woods Deposit', 'Size Stone Deposit',
-#               'Size Fabrics Deposit', 'Size Metals Deposit',
-#               'Size Gems Deposit','Size Elements Deposit']
-#fig2 = ff.create_distplot(hist_data, group_labels)
-
-#import plotly.figure_factory as ff
-
-# combine make_subplots, go.Scatter and ff.create_distplot(
-#f=ff.create_distplot(hist_data, group_labels)
-#st.plotly_chart(f)
-
-
 
 ### How many plots
 dict_elem = {}
@@ -209,14 +193,10 @@ dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
 dframe2=dframe[dframe['Vol']>0]
-#dframe2['%'] = dframe2['Vol']/sum(dframe2)
 
 
 fig11 = px.pie(dframe2, values='Vol', names='Materials')
 st.plotly_chart(fig11)
 st.dataframe(dframe2)
-
-
-#st.altair_chart(st.dataframe(dframe2) | st.plotly_chart(fig11))
 
 
