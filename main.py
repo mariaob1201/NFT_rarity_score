@@ -15,16 +15,16 @@ qualities_df['Score_f']=100*qualities_df['Score']
 N=len(qualities_df)
 
 # GATHERING ON THE PLOT - SIMULATION
-st.sidebar.markdown("## General Controls")
+st.sidebar.markdown("## Controls")
 
 # Selección del plot
 reg = st.sidebar.selectbox(
-    "Chose Region for Qualities:",
+    "Chose Region:",
     ['All'] + sorted(list(qualities_df['Region'].unique()))
 )
 
 ps = st.sidebar.selectbox(
-    "Chose Plot Size for Qualities:",
+    "Chose Plot Size:",
      [-1] + [8,16,32,64,128]
 )
 
@@ -32,6 +32,16 @@ classif = st.sidebar.selectbox(
     "Chose Quality Class:",
     ['All'] + ['Meager','Fair','Rich','Lush','Bountiful']
 )
+
+
+st.sidebar.markdown("## Number of deposits (at least)")
+woods_size = st.sidebar.slider('Size of Wood Deposits', min_value=0, max_value=7, value=0,step=1)
+stone_size = st.sidebar.slider('Size of Stone Deposits', min_value=0, max_value=7, value=0,step=1)
+fabr_size = st.sidebar.slider('Size of Fabric Deposits', min_value=0, max_value=7, value=0,step=1)
+met_size = st.sidebar.slider('Size of Metals Deposits', min_value=0, max_value=7, value=0,step=1)
+gems_size = st.sidebar.slider('Size of Gem Deposits', min_value=0, max_value=7, value=0,step=1)
+els_size = st.sidebar.slider('Size of Elements Deposits', min_value=0, max_value=7, value=0,step=1)
+
 
 if 'All' in reg:
     if ps<1:
@@ -49,6 +59,15 @@ else:
 
 if 'All' not in classif:
     qualities_df1 = qualities_df1[qualities_df1['Classification'] == classif]
+
+
+qualities_df1 = qualities_df1[(qualities_df1['Woods_elements']>=woods_size) &
+                            (qualities_df1['Stone_elements']>=stone_size) &
+                            (qualities_df1['Fabrics_elements']>=fabr_size) &
+                            (qualities_df1['Metals_elements']>=met_size) &
+                            (qualities_df1['Gems_elements']>=gems_size) &
+                            (qualities_df1['Element_elements']>=els_size)]
+
 
 #print('**** ', qualities_df1.columns)
 
@@ -71,7 +90,7 @@ st.markdown("- Lush: plots population with score between [.66,.94] ")
 st.markdown("- Bountiful: plots population with score between [.95,1] ")
 
 
-st.subheader('''Statistical methodology ''')
+st.subheader('''Statistical Approach ''')
 st.write(
     f""" 
             Methodology: https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
