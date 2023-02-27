@@ -4,6 +4,8 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import streamlit as st
 import pandas as pd
+
+import functions
 from functions import *
 import plotly.express as px
 import ast
@@ -113,6 +115,8 @@ st.dataframe(split)
 
 split.melt(value_name="val").groupby(["val"]).size()
 st.dataframe(split)"""
+
+dict_elem1 = functions.dict_elem
 
 for key, value in qualities_df1.iterrows():
     # print('Here ', key, qualities_df1.at[key, "List_of_elements"])
