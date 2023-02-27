@@ -4,16 +4,11 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import streamlit as st
 import pandas as pd
-
+from functions import *
 import plotly.express as px
 
 qualities_df=pd.read_csv('output_score_yisus.csv')
 qualities_df['Score_f']=100*qualities_df['Score']
-def fun(x):
-    if len(x)<4:
-        return 8
-    else:
-        return int(x[:2])
 
 # GATHERING ON THE PLOT - SIMULATION
 st.sidebar.markdown("## General Controls")
@@ -95,7 +90,7 @@ st.plotly_chart(fig_wd1)
 
 qua_p = qualities_df3.groupby(['Region'], as_index=False).agg({
     'plot_id': ['count'],
-    'Score_f': ['min','max','median','mean','std']
+    'Score_f': ['min','max','median','std', percentile(25), 'mean', percentile(75)]
 })
 qua_p['%']=qua_p[('plot_id', 'count')]/9650
 st.dataframe(qua_p)
