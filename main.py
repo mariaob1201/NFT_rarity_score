@@ -53,7 +53,15 @@ if 'All' not in classif:
 
 
 # GATHERING ON THE PLOT - SIMULATION
-st.header("## Plot Quality")
+st.header("Plot Quality")
+st.write(
+    f""" Plot quality assigns an score from 1 to 100 to each plot. Here we present two approaches, 
+    both of them are dependent on the collection:
+    - An statistical methodology based on rarity weights
+    https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
+    - An frequentist methodology based on distribution. """
+)
+
 
 st.subheader('''Controls for Plot Quality ''')
 st.write(
