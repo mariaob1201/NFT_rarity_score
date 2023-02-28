@@ -33,7 +33,7 @@ classif = st.sidebar.selectbox(
     ['All'] + ['Meager','Fair','Rich','Lush','Bountiful']
 )
 min_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=0 ,step=1)
-max_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=100 ,step=1)
+max_score = st.sidebar.slider('Max Score', min_value=0, max_value=100, value=100 ,step=1)
 
 st.sidebar.markdown("## Min number of deposits")
 woods_size = st.sidebar.slider('Size of Wood Deposits', min_value=0, max_value=7, value=0,step=1)
