@@ -184,14 +184,15 @@ for key, value in qualities_df1.iterrows():
     for el1 in res2:
         dict_elem1[el1] += 1
 
-x=list(dict_elem1.keys())
-y=list(dict_elem1.values())
+def fam(list_v):
+
 
 dict_f = {}
 dict_f['Deposits'] = dict_elem1.keys()
 dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
+dframe['Family'] = dframe.apply(lambda row: functions.categorise(row), axis=1)
 dframe2 = dframe[dframe['Vol']>0]
 
 
