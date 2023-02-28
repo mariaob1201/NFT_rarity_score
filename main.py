@@ -192,14 +192,14 @@ dict_f['Deposits'] = dict_elem1.keys()
 dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
-dframe2=dframe[dframe['Vol']>0]
+dframe2 = dframe[dframe['Vol']>0]
 
 
 fig11 = px.pie(dframe2, values='Vol', names='Deposits')
 fig11.update_layout(legend=dict(
     orientation="h",
     yanchor="bottom",
-    y=1.02,
+    y=2.5,
     xanchor="right",
     x=1
 ))
