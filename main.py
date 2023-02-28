@@ -35,7 +35,7 @@ classif = st.sidebar.selectbox(
 min_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=0 ,step=1)
 max_score = st.sidebar.slider('Min Score', min_value=0, max_value=100, value=100 ,step=1)
 
-st.sidebar.markdown("## Min number of elements per deposits")
+st.sidebar.markdown("## Min number of deposits")
 woods_size = st.sidebar.slider('Size of Wood Deposits', min_value=0, max_value=7, value=0,step=1)
 stone_size = st.sidebar.slider('Size of Stone Deposits', min_value=0, max_value=7, value=0,step=1)
 fabr_size = st.sidebar.slider('Size of Fabric Deposits', min_value=0, max_value=7, value=0,step=1)
@@ -79,11 +79,9 @@ qualities_df1 = qualities_df1[qualities_df1['Score_f'] <= max_score]
 # GATHERING ON THE PLOT - SIMULATION
 st.header("Plot Quality")
 st.write(
-    f""" Plot quality assigns an score from 1 to 100 to each plot. Here we present two approaches, 
-    both of them are dependent on the collection:
+    f""" Plot quality assigns an score from 1 to 100 to each plot. Here we present an statistical approach dependent on the collection:
     - An statistical methodology based on rarity weights
     https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
-    - An frequentist methodology based on distribution. 
 """
 )
 
@@ -91,8 +89,8 @@ st.write("THE CLASSIFICATION")
 st.markdown("- Meager: 10 % of plots population with lowest score")
 st.markdown("- Fair: plots population with score between [.11,.25]")
 st.markdown("- Rich: plots population with score between [.26,.65] ")
-st.markdown("- Lush: plots population with score between [.66,.94] ")
-st.markdown("- Bountiful: plots population with score between [.95,1] ")
+st.markdown("- Lush: plots population with score between [.66,.90] ")
+st.markdown("- Bountiful: plots population with score between [.91,1] ")
 
 
 st.subheader('''Statistical Approach ''')
@@ -101,9 +99,9 @@ st.write(
             Methodology: https://bisonic.atlassian.net/wiki/spaces/META/pages/314081281/Rarity+Score+on+Plots
             The Final Score takes into account two preeliminar scores:
 
-                - Scoring the material intensity: takes into account the plot size that have a bigger scale in material storage, and at the same time takes into account the essence strength per each material available in such existent deposits
-                - Scoring the deposits existence measures two things:
-                    - Scoring the amount of materials for all the deposits the plot has
+                - Scoring the deposit intensity: takes into account the plot size by a reserve multiplier and the essence strength in such existent deposit
+                - Scoring the deposits existence by:
+                    - Scoring the amount of deposits of certain family the plot has (a plot with 7 gems deposits is rarer in this attribute that other with 5)
                     - Scoring the total of deposits
     """
 )
@@ -126,7 +124,7 @@ fig_wd1 = px.scatter(qualities_df1, x="Number_of_elements", y=['Score_f'],
             'Fabrics_elements', 'Metals_elements', 'Gems_elements',
             'Element_elements' ], height=400)
 fig_wd1.update_layout(
-        xaxis_title="Number of distinct materials available in a single plot", yaxis_title="Plot Score"
+        xaxis_title="Number of distinct deposits available per plot", yaxis_title="Plot Score"
     )
 st.plotly_chart(fig_wd1)
 
@@ -190,14 +188,14 @@ x=list(dict_elem1.keys())
 y=list(dict_elem1.values())
 
 dict_f = {}
-dict_f['Materials'] = dict_elem1.keys()
+dict_f['Deposits'] = dict_elem1.keys()
 dict_f['Vol'] = dict_elem1.values()
 
 dframe = pd.DataFrame.from_dict(dict_f)
 dframe2=dframe[dframe['Vol']>0]
 
 
-fig11 = px.pie(dframe2, values='Vol', names='Materials')
+fig11 = px.pie(dframe2, values='Vol', names='Deposits')
 st.plotly_chart(fig11)
 st.dataframe(dframe2)
 
