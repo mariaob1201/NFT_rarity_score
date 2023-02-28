@@ -184,7 +184,6 @@ for key, value in qualities_df1.iterrows():
     for el1 in res2:
         dict_elem1[el1] += 1
 
-def fam(list_v):
 
 
 dict_f = {}
