@@ -196,15 +196,6 @@ dframe2 = dframe[dframe['Vol']>0]
 
 
 fig11 = px.pie(dframe2, values='Vol', names='Deposits')
-fig11.update_layout(legend=dict(
-    orientation="h",
-    yanchor="bottom",
-    y=2.5,
-    xanchor="right",
-    x=1
-))
-
-
 st.plotly_chart(fig11)
 st.dataframe(dframe2)
 
