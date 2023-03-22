@@ -1,16 +1,9 @@
 from io import BytesIO
-import time
-import random
-from difflib import SequenceMatcher
-from operator import itemgetter
-import numpy as np
 import pandas as pd
 import logging
-import json
 import boto3
 import os
 
-#from pyprobs import Probability as pr
 from io import StringIO # python3; python2: BytesIO
 
 N = 13000
@@ -121,7 +114,7 @@ def deposits_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
                         dict_tam[key] = value
 
         df_gb[i + '_repeated'] = df_gb[dep].map(dict_tam)
-        df_gb[i + '_existence_rank'] = df_gb.apply(lambda x: fxy(x[i + '_repeated']), axis=1)
+        df_gb[i + '_existence_rank'] = df_gb[i + '_repeated'].rank(method='dense')
 
     df_gb['Existence_puntuation_mult'] = df_gb['Woods_existence_rank'] * df_gb['Stone_existence_rank'] * df_gb[
         'Fabrics_existence_rank'] * df_gb['Metals_existence_rank'] * df_gb['Gems_existence_rank'] * df_gb[
@@ -136,39 +129,6 @@ def deposits_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
     _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_gb,
                                   folder + os.environ['INPUTFILE'][:10].replace(' ','')+'_deposits_score.csv',s3_resource)
 
-
-def prev_intensity_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
-    print('Here in prev_intensity_score ', inputfile.columns)
-    for i in ['plot_id', 'size', 'Region Names']:
-        if i not in inputfile.columns:
-            print('Noooooooo 11>>> ', i)
-
-    df_base = inputfile[['plot_id', 'size', 'Region Names']].drop_duplicates()
-
-    #dfames = []
-    for i in range(0, 6):
-        new = inputfile.pivot(index='plot_id', columns=[family[i]], values=family[i] + '_Full_Intensity')
-        new.columns = [x + '_tintensity' for x in new.columns.ravel()]
-
-        df_base = df_base.merge(new, on=['plot_id'], how='left')
-        #dfames.append(new)
-    _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_base,
-                        folder +os.environ['INPUTFILE'][:10].replace(' ','')+'_prev_intensity_score_salida_1.csv', s3_resource)
-
-    for i in df_base.columns[3:]:
-        dict_tam = {}
-        dups_color = df_base.pivot_table(columns=[i], aggfunc='size')
-        for key, value in dups_color.iteritems():
-            if int(key) < 10:
-                dict_tam[key] = value * (11 - int(key))
-            else:
-                dict_tam[key] = value
-
-        df_base[i + '_repeated'] = df_base[i].map(dict_tam)
-        df_base[i + '_rank'] = df_base.apply(lambda x: fxy(x[i + '_repeated']), axis=1)
-
-    _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_base,
-                    folder + os.environ['INPUTFILE'][:10].replace(' ','')+'_prev_intensity_score_salida_2.csv', s3_resource)
 
 def intensity_score(s3_resource, inputfile, OUTPUTBUCKET):
     print('Here in intensity_score ', inputfile.columns)
@@ -198,10 +158,52 @@ def intensity_score(s3_resource, inputfile, OUTPUTBUCKET):
                                          'Carbon_tintensity_rank'] * df_gb0['Hydrogen_tintensity_rank'] * df_gb0[
                                          'Nitrogen_tintensity_rank'] * df_gb0['Silicon_tintensity_rank'] * df_gb0[
                                          'Sulfur_tintensity_rank']
+
     df_gb0['Percentile_IntensityAccumulated'] = df_gb0.IntensityAccumulated.rank(pct=True)
     df_gb0['Class_IntensityAccumulated'] = df_gb0['Percentile_IntensityAccumulated'].apply(lambda x: classification(x))
     _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_base,
                                 'output/' +os.environ['INPUTFILE'][:10].replace(' ','')+ '_intensity_score.csv', s3_resource)
+
+
+def prev_intensity_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
+    print('Here in prev_intensity_score ', inputfile.columns)
+    for i in ['plot_id', 'size', 'Region Names']:
+        if i not in inputfile.columns:
+            print('Noooooooo 11>>> ', i)
+
+    df_base = inputfile[['plot_id', 'size', 'Region Names']].drop_duplicates()
+
+    newcols = []
+    for i in range(0, 6):
+        new = inputfile.pivot(index='plot_id', columns=[family[i]], values=family[i] + '_Full_Intensity')
+        new.columns = [x + '_tintensity' for x in new.columns.ravel()]
+        newcols.append([x for x in new.columns.ravel()])
+        df_base = df_base.merge(new, on=['plot_id'], how='left')
+        #dfames.append(new)
+    _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_base,
+                        folder +os.environ['INPUTFILE'][:10].replace(' ','')+'_prev_intensity_score_salida_1.csv', s3_resource)
+
+
+
+    for i in df_base.columns[3:]:
+        dict_tam = {}
+        dups_color = df_base.pivot_table(columns=[i], aggfunc='size')
+        for key, value in dups_color.iteritems():
+            if int(key) < 10:
+                dict_tam[key] = value * (11 - int(key))
+            else:
+                dict_tam[key] = value
+
+        df_base[i + '_repeated'] = df_base[i].map(dict_tam)
+        df_base[i + '_tintensity_rank_prev'] = df_base[i + '_repeated'].rank(method='dense')
+        df_base[i + '_tintensity_rank'] = df_base[i + '_tintensity_rank_prev'].rank(pct=True)
+
+
+    _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_base,
+                    folder + os.environ['INPUTFILE'][:10].replace(' ','')+'_prev_intensity_score_salida_2.csv', s3_resource)
+
+    intensity_score(s3_resource, df_base, 'score/')
+    print('Ok on intensity score')
 
 def unique_score(a,b):
     mfin2 = a.merge(b, on=['plot_id'], how='left')
@@ -228,7 +230,7 @@ def main(event):
 
     deposits_score(s3_resource, file_resources, bucket_output, 'auxiliar/')
     prev_intensity_score(s3_resource, file_resources, bucket_output, 'auxiliar/')
-    intensity_score(s3_resource, file_resources, 'score/')
+
     deposit_score_file = read_plots_input(s3_resource,bucket_output,
                                 'output/'+os.environ['INPUTFILE'][:10].replace(' ','')+ '_deposits_score.csv')
     intensities_score_file = read_plots_input(s3_resource,bucket_output,
@@ -237,5 +239,5 @@ def main(event):
     logger.info('Here ok')
 
 
-"""event={'file':'plots_QA (2)_salida_2.csv'}
-main(event)"""
+event={'file':'plots_QA (2)_salida_2.csv'}
+main(event)
