@@ -14,8 +14,18 @@ def fxy(x):
         return N / x
 
 family = ['Woods', 'Stone', 'Fabrics','Metals', 'Gems', 'Element']
-
-#Reading the file in s3
+ifile = 'plots_PROD (2).csv'
+def classification(x):
+    classif = 'Bountiful'
+    if x<.05:
+        classif = 'Meager'
+    elif x<.3:
+        classif = 'Fair'
+    elif x<.7:
+        classif = 'Rich'
+    elif x<.95:
+        classif = 'Lush'
+    return classif
 def read_plots_input(s3,bucket_name, file):
     # Create an S3 access object
     obj = s3.Object(bucket_name, file)
@@ -38,17 +48,6 @@ def _write_dataframe_to_csv_on_s3(DESTINATION, dataframe, filename):
                                      aws_access_key_id=os.environ['AWSACCESS_KEY_ID'],
                                      aws_secret_access_key=os.environ['AWSSECRET_ACCESS_KEY'])
     try:
-        """gz_buffer = BytesIO()
-
-        with gzip.GzipFile(
-                filename=filename,
-                mode='w',
-                fileobj=gz_buffer) as gz_file:
-            dataframe.to_csv(TextIOWrapper(gz_file, 'utf8'), index=False)
-
-            s3.put_object(
-                Bucket=DESTINATION, Key=filename+".zip", Body=gz_buffer.getvalue()
-            )"""
         csv_buffer = StringIO()
         dataframe.to_csv(csv_buffer, sep=",", index=False)
         s3.Object(DESTINATION, filename).put(Body=csv_buffer.getvalue())
@@ -57,42 +56,8 @@ def _write_dataframe_to_csv_on_s3(DESTINATION, dataframe, filename):
     except Exception as e:
         logging.error('Error uploading ',e)
 
-def input_enginering(s3_resource, inputfile, OUTPUTBUCKET, folder, filename):
-    logging.info('Here in input enginering ', inputfile.columns)
-    try:
-        df_gb0 = inputfile.groupby(['plot_id', 'size', 'Region Names'], as_index=False).agg({
-            'WoodsExistence': ['sum'],
-            'StonesExistence': ['sum'],
-            'FabricsExistence': ['sum'],
-            'MetalsExistence': ['sum'],
-            'GemsExistence': ['sum'],
-            'ElementExistence': ['sum']})
 
-        df_gb0.columns = [x[0] if 'Existence' not in x[0] else
-                          x[0][:-9] + '__Deposits' for x in df_gb0.columns.ravel()]
-
-        df_gb0['Deposits'] = df_gb0['Woods__Deposits'] + df_gb0['Stones__Deposits'] + df_gb0['Fabrics__Deposits'] + \
-                             df_gb0['Metals__Deposits'] + df_gb0['Gems__Deposits'] + df_gb0['Element__Deposits']
-        df_gb0['Percentile_Deposits_Rank'] = df_gb0.Deposits.rank(pct=True)
-
-        _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, df_gb0,
-                                      folder + os.environ['INPUTFILE'][:10].replace(' ','').replace('(','')+filename)
-    except Exception as e:
-        logging.error('Error on input enginering ', e)
-
-def classification(x):
-    classif = 'Bountiful'
-    if x<.10:
-        classif = 'Meager'
-    elif x<.35:
-        classif = 'Fair'
-    elif x<.65:
-        classif = 'Rich'
-    elif x<.91:
-        classif = 'Lush'
-    return classif
-
-def deposits_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
+def deposits_score(inputfile, OUTPUTBUCKET, folder):
     logging.info('Here in input deposit scores ', inputfile.columns)
     try:
         df_gb = inputfile.groupby(['plot_id', 'size', 'Region Names'], as_index=False).agg({
@@ -149,7 +114,7 @@ def deposits_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
     except Exception as e:
         logging.error('Error on deposits existence ', e)
 
-def intensity_score(s3_resource, inputfile, OUTPUTBUCKET):
+def intensity_score(inputfile, OUTPUTBUCKET):
     logging.info('Here in intensity_score ', inputfile.columns)
     try:
         df_gb0 = inputfile.copy()
@@ -185,7 +150,7 @@ def intensity_score(s3_resource, inputfile, OUTPUTBUCKET):
         logging.error('Error on intensity score ', e)
 
 
-def prev_intensity_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
+def prev_intensity_score(inputfile, OUTPUTBUCKET, folder):
     logging.info('Here in prev_intensity_score ', inputfile.columns)
     df_base = inputfile[['plot_id', 'size', 'Region Names']].drop_duplicates()
     try:
@@ -218,48 +183,52 @@ def prev_intensity_score(s3_resource, inputfile, OUTPUTBUCKET, folder):
                         folder + os.environ['INPUTFILE'][:10].replace(' ','').replace('(','')+
                                       '_prev_intensity_score_salida_2.csv')
 
-        intensity_score(s3_resource, df_base, OUTPUTBUCKET)
+        intensity_score(df_base, OUTPUTBUCKET)
         logging.info('Ok on intensity score')
     except Exception as e:
         logging.error('Error on prev intensity score ', e)
-def unique_score(a,b, OUTPUTBUCKET,s3_resource):
+
+
+def unique_score(a, b, OUTPUTBUCKET, weight_intensity):
     logging.info('Here on unique score')
     try:
         mfin2 = a.merge(b, on=['plot_id'], how='left')
         mfin2['weighted_puntuation'] = \
-            float(os.environ['WEIGH_INTENS'])*mfin2['Percentile_IntensityAccumulated'] + \
-                                    float(os.environ['WEIGH_DE'])*mfin2['Pctile_DepositExistence']
+            float(weight_intensity) * mfin2['Percentile_IntensityAccumulated'] + \
+            float(1 - weight_intensity) * mfin2['Pctile_DepositExistence']
         mfin2['pctil_final_puntuation'] = mfin2.weighted_puntuation.rank(pct=True)
         mfin2['Class_final_puntuation'] = mfin2['pctil_final_puntuation'].apply(lambda x: classification(x))
 
         _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, mfin2, 'output/' +
-                        os.environ['INPUTFILE'][:10].replace(' ','').replace('(','')+ '_final_score.csv')
+                                      ifile[:10].replace(' ', '').replace('(', '') + '_final_score.csv')
+        logging.info('Unique Score ', 'output/' +
+                     ifile[:10].replace(' ', '').replace('(', '') + '_final_score.csv')
     except Exception as e:
         logging.error('Error on unique_score score ', e)
 
+
 def main(event):
-    logging.info('Init by ', event)
     try:
-        s3_resource = boto3.resource('s3', region_name=os.environ['AWSREGION_NAME'],
-                                     aws_access_key_id=os.environ['AWSACCESS_KEY_ID'],
-                                     aws_secret_access_key=os.environ['AWSSECRET_ACCESS_KEY'])
+        s3_resource = boto3.resource('s3', region_name='us-east-1',  # os.environ['AWSREGION_NAME'],
+                                     aws_access_key_id='AKIAQRXNKUHINLAA2F76',  # os.environ['AWSACCESS_KEY_ID'],
+                                     aws_secret_access_key='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')  # os.environ['AWSSECRET_ACCESS_KEY'])
 
-        bucket_input = os.environ['BUCKETNAME']
-        bucket_output = os.environ['BUCKET-OUTPUT']
-        file_resources = read_plots_input(s3_resource,bucket_input, 'plotresourcesoutput/'+os.environ['INPUTFILE'])
+        bucket_input = 'plot-resources-files'  # os.environ['BUCKETNAME']
+        bucket_output = 'plot-rarity-score'  # os.environ['BUCKET-OUTPUT']
+        file_resources = read_plots_input(s3_resource, bucket_input, 'plotresourcesoutput/' + event['file'])
 
-        deposits_score(s3_resource, file_resources, bucket_output, 'output/')
-        prev_intensity_score(s3_resource, file_resources, bucket_output, 'auxiliar/')
+        deposits_score(file_resources, bucket_output, 'output/')
+        prev_intensity_score(file_resources, bucket_output, 'auxiliar/')
         logging.info('Reading files to join ')
-        deposit_score_file = read_plots_input(s3_resource,bucket_output,
-                    'output/' + os.environ['INPUTFILE'][:10].replace(' ','').replace('(','')+'_deposits_score.csv')
-        intensities_score_file = read_plots_input(s3_resource,bucket_output,
-                    'output/' + os.environ['INPUTFILE'][:10].replace(' ','').replace('(','')+'_intensity_score.csv')
-        unique_score(deposit_score_file, intensities_score_file, bucket_output, s3_resource)
-        logging.info('Here ok')
+        deposit_score_file = read_plots_input(s3_resource, bucket_output,
+                                              'output/' + ifile[:10].replace(' ', '').replace('(',
+                                                                                              '') + '_deposits_score.csv')
+        intensities_score_file = read_plots_input(s3_resource, bucket_output,
+                                                  'output/' + ifile[:10].replace(' ', '').replace('(',
+                                                                                                  '') + '_intensity_score.csv')
+        unique_score(deposit_score_file, intensities_score_file, bucket_output, .5)
+
+        print('Here ok', len(file_resources))
+
     except Exception as e:
         logging.error('Error on main function ', e)
-
-"""
-event={'file':'plots_QA (2)_salida_2.csv'}
-main(event)"""
