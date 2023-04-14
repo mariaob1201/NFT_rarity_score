@@ -53,7 +53,6 @@ def _write_dataframe_to_csv_on_s3(DESTINATION, dataframe, filename):
         dataframe.to_csv(csv_buffer, sep=",", index=False)
         s3.Object(DESTINATION, filename).put(Body=csv_buffer.getvalue())
 
-        print('ok uploading ', filename)
     except Exception as e:
         logging.error('Error uploading ',e)
 
@@ -78,6 +77,7 @@ def deposits_score(inputfile, OUTPUTBUCKET, folder):
             cols = i + '__Deposits'
             dep = i + '__Deposits'
             dups_color = df_gb.pivot_table(columns=[cols], aggfunc='size')
+            #This part weights the first 0,1,2 deposits high in order to ensure a decreasing trend and then ranked lower
             for key, value in dups_color.iteritems():
                 dict_tam[key] = value
                 if key == 0:
@@ -186,20 +186,20 @@ def prev_intensity_score(inputfile, OUTPUTBUCKET, folder):
     except Exception as e:
         logging.error('Error on prev intensity score ', e)
 
-def unique_score(a, b, OUTPUTBUCKET, weight_intensity):
+def unique_score(a, b, OUTPUTBUCKET, weight_intensity, ifile):
     logging.info('Here on unique score')
     try:
         mfin2 = a.merge(b, on=['plot_id'], how='left')
         mfin2['weighted_puntuation'] = \
-            float(weight_intensity) * mfin2['Percentile_IntensityAccumulated'] + \
-            float(1 - weight_intensity) * mfin2['Pctile_DepositExistence']
+            (weight_intensity) * mfin2['Percentile_IntensityAccumulated'] + \
+            (1 - weight_intensity) * mfin2['Pctile_DepositExistence']
         mfin2['pctil_final_puntuation'] = mfin2.weighted_puntuation.rank(pct=True)
         mfin2['Class_final_puntuation'] = mfin2['pctil_final_puntuation'].apply(lambda x: classification(x))
 
         _write_dataframe_to_csv_on_s3(OUTPUTBUCKET, mfin2, 'output/' +
                                       ifile[:10].replace(' ', '').replace('(', '') + '_final_score.csv')
-        logging.info('Unique Score ', 'output/' +
-                     ifile[:10].replace(' ', '').replace('(', '') + '_final_score.csv')
+        logging.info('Unique Score ', 'output/' + ifile[:10].replace(' ', '').replace('(', '') + '_final_score.csv')
+
     except Exception as e:
         logging.error('Error on unique_score score ', e)
 
@@ -217,12 +217,12 @@ def main(event):
         prev_intensity_score(file_resources, bucket_output, 'auxiliar/')
         logging.info('Reading files to join ')
         deposit_score_file = read_plots_input(s3_resource, bucket_output,
-                                              'output/' + ifile[:10].replace(' ', '').replace('(',
+                                              'output/' + event['file'][:10].replace(' ', '').replace('(',
                                                                                               '') + '_deposits_score.csv')
         intensities_score_file = read_plots_input(s3_resource, bucket_output,
-                                                  'output/' + ifile[:10].replace(' ', '').replace('(',
+                                                  'output/' + event['file'][:10].replace(' ', '').replace('(',
                                                                                                   '') + '_intensity_score.csv')
-        unique_score(deposit_score_file, intensities_score_file, bucket_output, .5)
+        unique_score(deposit_score_file, intensities_score_file, bucket_output, .5, event['file'])
 
     except Exception as e:
         logging.error('Error on main function ', e)
