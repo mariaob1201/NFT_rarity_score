@@ -81,13 +81,13 @@ def deposits_score(inputfile, OUTPUTBUCKET, folder):
             for key, value in dups_color.iteritems():
                 dict_tam[key] = value
                 if key == 0:
-                    dict_tam[key] = pow(value, 2)
+                    dict_tam[key] = pow(value+1, 2)
                 else:
                     if key < 2:
-                        dict_tam[key] = pow(value, 1.5)
+                        dict_tam[key] = pow(value+1, 1.5)
                     else:
                         if key < 3:
-                            dict_tam[key] = pow(value, 1)
+                            dict_tam[key] = pow(value+1, 1.01)
                         else:
                             dict_tam[key] = value
 
